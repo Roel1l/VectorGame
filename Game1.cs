@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using VectorGame.Objects;
+using VectorGame.Objects.Bird;
 
 namespace VectorGame;
 

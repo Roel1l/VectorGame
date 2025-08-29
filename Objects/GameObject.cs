@@ -6,9 +6,10 @@ namespace VectorGame.Objects;
 
 public abstract class GameObject
 {
+    public Vector2 Position { get; set; }
+
     protected abstract string TextureName { get; }
     protected Texture2D Texture { get; set; }
-    protected Vector2 Position { get; set; }
     protected Vector2 Scale { get; set; } = Vector2.One;
     protected Vector2 Origin { get; set; }
     protected float Rotation { get; set; }
