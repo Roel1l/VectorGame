@@ -26,7 +26,7 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 100; i++)
         {
             _gameObjects.Add(new Bird());
         }
