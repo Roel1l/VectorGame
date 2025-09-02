@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 
-namespace VectorGame.Objects.Bird.States;
+namespace VectorGame.Objects.BirdObject.States;
 
 public class RandomSteeringState : BirdState
 {

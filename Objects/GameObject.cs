@@ -6,6 +6,9 @@ namespace VectorGame.Objects;
 
 public abstract class GameObject
 {
+    public readonly GameObjectManager GameObjectManager;
+    public readonly GraphicsDeviceManager Graphics;
+    public int Id { get; set; }
     public Vector2 Position { get; set; }
 
     protected abstract string TextureName { get; }
@@ -18,12 +21,17 @@ public abstract class GameObject
     protected int FrameCount { get; set; } = 1;
     protected int FramesPerSecond { get; set; } = 0;
 
-    protected float TimePerFrame {  get; set; }
+    protected float TimePerFrame { get; set; }
     protected int Frame { get; set; }
 
     protected float TotalElapsed { get; set; }
 
-    public abstract void Initialize(GraphicsDeviceManager graphics);
+    protected GameObject(GameObjectManager gameObjectManager, GraphicsDeviceManager graphics)
+    {
+        Graphics = graphics;
+        GameObjectManager = gameObjectManager;
+        GameObjectManager.Add(this);
+    }
 
     public void LoadContent(ContentManager contentManager)
     {

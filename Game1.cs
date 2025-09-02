@@ -1,22 +1,25 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
 using VectorGame.Objects;
-using VectorGame.Objects.Bird;
+using VectorGame.Objects.BirdObject;
+using VectorGame.Objects.FoodObject;
 
 namespace VectorGame;
 
 public class Game1 : Game
 {
     private readonly GraphicsDeviceManager _graphics;
+    private readonly GameObjectManager _gameObjectManager;
+
     private SpriteBatch _spriteBatch;
 
-    private readonly List<GameObject> _gameObjects = [];
+    private MouseState _previousMouseState;
 
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
+        _gameObjectManager = new GameObjectManager();
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
 
@@ -27,12 +30,10 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 1; i++)
         {
-            _gameObjects.Add(new Bird());
+            _gameObjectManager.Add(new Bird(_gameObjectManager, _graphics));
         }
-
-        _gameObjects.ForEach(obj => obj.Initialize(_graphics));
 
         base.Initialize();
     }
@@ -40,7 +41,11 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        _gameObjects.ForEach(obj => obj.LoadContent(Content));
+
+        foreach (var gameObject in _gameObjectManager.GetAll())
+        {
+            gameObject.LoadContent(Content);
+        }
     }
 
     protected override void Update(GameTime gameTime)
@@ -52,7 +57,20 @@ public class Game1 : Game
             Exit();
         }
 
-        _gameObjects.ForEach(obj => obj.Update(gameTime));
+        var currentMouseState = Mouse.GetState();
+        if (currentMouseState.LeftButton == ButtonState.Pressed && _previousMouseState.LeftButton == ButtonState.Released)
+        {
+            var newFood = new Food(_gameObjectManager, _graphics, new Vector2(currentMouseState.X, currentMouseState.Y));
+            newFood.LoadContent(Content);
+            _gameObjectManager.Add(newFood);
+        }
+
+        _previousMouseState = currentMouseState;
+
+        foreach (var gameObject in _gameObjectManager.GetAll())
+        {
+            gameObject.Update(gameTime);
+        }
 
         base.Update(gameTime);
     }
@@ -63,11 +81,16 @@ public class Game1 : Game
 
         _spriteBatch.Begin();
 
-        foreach (var obj in _gameObjects)
+        foreach (var gameObject in _gameObjectManager.GetAll<Bird>())
         {
-            obj.Draw(_spriteBatch);
+            gameObject.Draw(_spriteBatch);
         }
-        
+
+        foreach (var gameObject in _gameObjectManager.GetAll<Food>())
+        {
+            gameObject.Draw(_spriteBatch);
+        }
+
         _spriteBatch.End();
 
         base.Draw(gameTime);

@@ -1,36 +1,31 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using VectorGame.Objects.Bird.States;
+using VectorGame.Objects.BirdObject.States;
 
-namespace VectorGame.Objects.Bird;
+namespace VectorGame.Objects.BirdObject;
 
 public class Bird : GameObject
 {
     public float Speed { get; set; } = 100f;
+    public Vector2 Direction { get; set; }
+    public BirdState State { get; private set; }
 
     protected override string TextureName => "bird";
 
-    public Vector2 Direction { get; set; }
-
-    private GraphicsDeviceManager _graphics;
-
-    private readonly BirdState _state = new RandomSteeringState();
-
-    public override void Initialize(GraphicsDeviceManager graphics)
+    public Bird(GameObjectManager gameObjectManager, GraphicsDeviceManager graphics) : base(gameObjectManager, graphics)
     {
-        _graphics = graphics;
-
         Position = new Vector2(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
         FrameCount = 2;
         FramesPerSecond = 2;
         TimePerFrame = (float)1 / FramesPerSecond;
+        State = new RandomSteeringState();
     }
 
     public override void Update(GameTime gameTime)
     {
         var elapsedTimeInSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        _state.Update(this, elapsedTimeInSeconds);
+        State.Update(this, elapsedTimeInSeconds);
         
         LoopScreen();
         SetDirection();
@@ -42,22 +37,22 @@ public class Bird : GameObject
     {
         var position = Position;
 
-        if (position.X > _graphics.PreferredBackBufferWidth)
+        if (position.X > Graphics.PreferredBackBufferWidth)
         {
             position.X = 0;
         }
         else if (position.X < 0)
         {
-            position.X = _graphics.PreferredBackBufferWidth;
+            position.X = Graphics.PreferredBackBufferWidth;
         }
 
-        if (position.Y > _graphics.PreferredBackBufferHeight)
+        if (position.Y > Graphics.PreferredBackBufferHeight)
         {
             position.Y = 0;
         }
         else if (position.Y < 0)
         {
-            position.Y = _graphics.PreferredBackBufferHeight;
+            position.Y = Graphics.PreferredBackBufferHeight;
         }
 
         Position = position;

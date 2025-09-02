@@ -1,4 +1,4 @@
-﻿namespace VectorGame.Objects.Bird.States;
+﻿namespace VectorGame.Objects.BirdObject.States;
 
 public abstract class BirdState
 {
