@@ -2,5 +2,12 @@
 
 public abstract class BirdState
 {
-    public abstract void Update(Bird bird, float elapsedTimeInSeconds);
+    protected Bird Bird { get; private set; }
+
+    protected BirdState(Bird bird)
+    {
+        Bird = bird;
+    }
+
+    public abstract void Update(float elapsedTimeInSeconds);
 }

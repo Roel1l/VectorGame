@@ -7,8 +7,9 @@ namespace VectorGame.Objects.BirdObject;
 public class Bird : GameObject
 {
     public float Speed { get; set; } = 100f;
+    public float TurningSpeed { get; set; } = 0.01f;
     public Vector2 Direction { get; set; }
-    public BirdState State { get; private set; }
+    public BirdState State { get; set; }
 
     protected override string TextureName => "bird";
 
@@ -18,17 +19,17 @@ public class Bird : GameObject
         FrameCount = 2;
         FramesPerSecond = 2;
         TimePerFrame = (float)1 / FramesPerSecond;
-        State = new RandomSteeringState();
+        State = new RandomSteeringState(this);
     }
 
     public override void Update(GameTime gameTime)
     {
         var elapsedTimeInSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        State.Update(this, elapsedTimeInSeconds);
+        State.Update(elapsedTimeInSeconds);
         
         LoopScreen();
-        SetDirection();
+        SetRotation();
 
         base.Update(gameTime);
     }
@@ -58,7 +59,7 @@ public class Bird : GameObject
         Position = position;
     }
 
-    private void SetDirection()
+    private void SetRotation()
     {
         if (Direction == Vector2.Zero)
         {

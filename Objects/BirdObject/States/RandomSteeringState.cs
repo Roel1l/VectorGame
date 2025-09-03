@@ -1,26 +1,32 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Linq;
+using VectorGame.Objects.FoodObject;
 
 namespace VectorGame.Objects.BirdObject.States;
 
 public class RandomSteeringState : BirdState
 {
     private const float SteeringIntervalInSeconds = 3f;
-    private const float TurningSpeed = 1.5f;
 
     private Vector2 _targetDirection;
     private float _steeringTimer;
 
-    public RandomSteeringState()
+    public RandomSteeringState(Bird bird) : base(bird)
     {
         _steeringTimer = SteeringIntervalInSeconds;
         SetNewTargetDirection();
     }
 
-    public override void Update(Bird bird, float elapsedTimeInSeconds)
+    public override void Update(float elapsedTimeInSeconds)
     {
-        Steer(bird, elapsedTimeInSeconds);
-        Move(bird, elapsedTimeInSeconds);
+        if (TryTransitionToChaseFoodState())
+        {
+            return;
+        }
+
+        Steer(elapsedTimeInSeconds);
+        Move(elapsedTimeInSeconds);
     }
 
     private void SetNewTargetDirection()
@@ -29,7 +35,7 @@ public class RandomSteeringState : BirdState
         _targetDirection = new Vector2((float)Math.Cos(randomAngle), (float)Math.Sin(randomAngle));
     }
 
-    private void Steer(Bird bird, float elapsedTimeInSeconds)
+    private void Steer(float elapsedTimeInSeconds)
     {
         _steeringTimer -= elapsedTimeInSeconds;
         if (_steeringTimer <= 0)
@@ -38,13 +44,42 @@ public class RandomSteeringState : BirdState
             _steeringTimer = SteeringIntervalInSeconds;
         }
 
-        bird.Direction = Vector2.Lerp(bird.Direction, _targetDirection, TurningSpeed * elapsedTimeInSeconds);
-        bird.Direction.Normalize();
+        Vector2 desiredDirection = _targetDirection;
+        if (desiredDirection != Vector2.Zero)
+        {
+            desiredDirection.Normalize();
+        }
+
+        Vector2 steeringForce = desiredDirection - Bird.Direction;
+
+        if (steeringForce.Length() > Bird.TurningSpeed)
+        {
+            steeringForce.Normalize();
+            steeringForce *= Bird.TurningSpeed;
+        }
+
+        Bird.Direction += steeringForce;
+        if (Bird.Direction != Vector2.Zero)
+        {
+            Bird.Direction.Normalize();
+        }
     }
 
-    private static void Move(Bird bird, float elapsedTimeInSeconds)
+    private void Move(float elapsedTimeInSeconds)
     {
-        var pixelsToMove = bird.Speed * elapsedTimeInSeconds;
-        bird.Position += bird.Direction * pixelsToMove;
+        var pixelsToMove = Bird.Speed * elapsedTimeInSeconds;
+        Bird.Position += Bird.Direction * pixelsToMove;
+    }
+
+    private bool TryTransitionToChaseFoodState()
+    {
+        if (Bird.GameObjectManager.GetAll<Food>().FirstOrDefault() is Food food)
+        {
+            Bird.State = new ChaseFoodState(Bird, food.Id);
+
+            return true;
+        }
+
+        return false;
     }
 }

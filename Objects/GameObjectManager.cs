@@ -35,7 +35,7 @@ public class GameObjectManager
         }
     }
 
-    public GameObject GetById(int id)
+    public GameObject? GetById(int id)
     {
         _gameObjectsById.TryGetValue(id, out var gameObject);
         return gameObject;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Linq;
 using VectorGame.Objects;
 using VectorGame.Objects.BirdObject;
 using VectorGame.Objects.FoodObject;
@@ -67,7 +68,7 @@ public class Game1 : Game
 
         _previousMouseState = currentMouseState;
 
-        foreach (var gameObject in _gameObjectManager.GetAll())
+        foreach (var gameObject in _gameObjectManager.GetAll().ToList())
         {
             gameObject.Update(gameTime);
         }
@@ -81,12 +82,12 @@ public class Game1 : Game
 
         _spriteBatch.Begin();
 
-        foreach (var gameObject in _gameObjectManager.GetAll<Bird>())
+        foreach (var gameObject in _gameObjectManager.GetAll<Bird>().ToList())
         {
             gameObject.Draw(_spriteBatch);
         }
 
-        foreach (var gameObject in _gameObjectManager.GetAll<Food>())
+        foreach (var gameObject in _gameObjectManager.GetAll<Food>().ToList())
         {
             gameObject.Draw(_spriteBatch);
         }

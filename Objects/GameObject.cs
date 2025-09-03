@@ -12,7 +12,7 @@ public abstract class GameObject
     public Vector2 Position { get; set; }
 
     protected abstract string TextureName { get; }
-    protected Texture2D Texture { get; set; }
+    protected Texture2D? Texture { get; set; }
     protected Vector2 Scale { get; set; } = Vector2.One;
     protected Vector2 Origin { get; set; }
     protected float Rotation { get; set; }
@@ -30,7 +30,6 @@ public abstract class GameObject
     {
         Graphics = graphics;
         GameObjectManager = gameObjectManager;
-        GameObjectManager.Add(this);
     }
 
     public void LoadContent(ContentManager contentManager)
@@ -61,7 +60,7 @@ public abstract class GameObject
 
     public virtual void Draw(SpriteBatch spriteBatch)
     {
-        int frameWidth = Texture.Width / FrameCount;
+        int frameWidth = Texture!.Width / FrameCount;
         var sourceRectangle = new Rectangle(frameWidth * Frame, 0,
             frameWidth, Texture.Height);
 
